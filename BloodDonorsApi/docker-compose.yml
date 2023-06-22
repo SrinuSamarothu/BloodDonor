@@ -1,0 +1,32 @@
+version: '3.4'
+
+networks:
+  donorNetwork:
+
+services:
+  donordb : 
+    container_name: donor-db
+    image : mcr.microsoft.com/mssql/server:2022-latest
+    ports:
+        - 8090:135
+    environment:
+        - ACCEPT_EULA=Y
+        - MSSQL_SA_PASSWORD=Sqlpassword@123
+    networks:
+        - donorNetwork
+  blooddonorsapi:
+    container_name: donor-app
+    image: ${DOCKER_REGISTRY-}blooddonorsapi
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+        - 8080:80
+    depends_on:
+        - donordb
+    environment:
+        - DB_HOST = donordb
+        - DB_NAME = donor
+        - DB_SA_PASSWORD = Sqlpassword@123
+    networks:
+        - donorNetwork

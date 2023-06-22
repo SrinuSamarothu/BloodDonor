@@ -1,0 +1,135 @@
+﻿@page "/"
+@using DataLayer.Entities
+@inject HttpClient http
+
+
+<head>
+
+    <style>
+
+        .search-bar {
+            position: relative;
+            top : 3rem;
+        }
+        .ip-field {
+
+        }
+
+        .search-result {
+            position : relative;
+            margin-top : 9rem;
+        }
+
+    </style>
+
+</head>
+
+<PageTitle>Index</PageTitle>
+
+<center><h1>Welcome to <b>BloodDonors</b> website</h1></center>
+
+<center><i>The place where you can find the blood donors.</i></center>
+
+
+<h5 class="search-bar">Search donors by Bloodgroup and City</h5>
+<br />
+<div class="input-group mb-3 search-bar">
+    <select @bind=bloodGroup class="form-select" id="inputGroupSelect02">
+        <option selected>Choose blood group...</option>
+        <option value="A%2B">A+</option>
+        <option value="A-">A-</option>
+        <option value="B%2B">B+</option>
+        <option value="B-">B-</option>
+        <option value="O%2B">O+</option>
+        <option value="O-">O-</option>
+        <option value="AB%2B">AB+</option>
+        <option value="AB-">AB-</option>
+    </select>
+
+    <select @bind=city class="form-select" id="inputGroupSelect02">
+        <option selected>Choose city...</option>
+        <option value="Eluru">Eluru</option>
+        <option value="Bhimavaram">Bhimavaram</option>
+    </select>
+
+    <button @onclick="getDonors" class="btn btn-outline-secondary" type="button">Button</button>
+
+</div>
+
+@if (donors.Count() == 0) {
+
+    <div class="search-result">
+        <h3>No donors found <b>try searching for near by cities</b></h3>
+    </div>
+
+}
+else
+{
+    <center>
+     <div class="search-result">
+     <table class="table">
+        @if (donors.Count() != 0)
+        {
+        <thead>
+                <tr>
+                <th>Name</th>
+                <th>Contact number</th>
+                <th>Blood group</th>
+                <th>Email</th>
+                <th>Profession</th>
+                <th>City</th>
+            </tr>
+        </thead>
+        }
+        <tbody>
+            @foreach (var donor in donors)
+            {
+                <tr>
+                    <td>@donor.name</td>
+                    <td>@donor.phnumber</td>
+                    <td>@donor.bloodGroup</td>
+                    <td>@donor.email</td>
+                    <td>@donor.profession</td>
+                    <td>@donor.city</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+        </div>
+    </center>
+}
+
+
+
+
+@code {
+    string bloodGroup, city;
+
+    List<Donor>? donors = new List<Donor>() { };
+
+    public Index()
+    {
+        
+    }
+
+
+    public async Task getDonors()
+    {
+        if(bloodGroup != null && city != null)
+        {
+            donors = await http.GetFromJsonAsync<List<Donor>>($"https://localhost:44310/api/Donor/getbyBloodGroup/{city}?bloodgroup={bloodGroup}");
+        }
+        else if(bloodGroup != null)
+        {
+            donors = await http.GetFromJsonAsync<List<Donor>>($"https://localhost:44310/api/Donor/getbyBloodGroup?bloodgroup={bloodGroup}");
+        }
+        else if(city != null)
+        {
+            donors = await http.GetFromJsonAsync<List<Donor>>($"https://localhost:44310/api/Donor/getbyCity/{city}");
+        }
+        else
+        {
+            donors = null;
+        }
+    }
+}
