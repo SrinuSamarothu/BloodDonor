@@ -1,0 +1,86 @@
+﻿@page "/Panel"
+
+@using TelerikGridHelper.Client.ViewBase
+
+
+<TelerikCard Width="100%">
+    <CardHeader Class="k-hbox justify-space-between">
+        <div>
+            <CardTitle>Sample Panel</CardTitle>
+        </div>
+
+        <div>
+            <TelerikButton FillMode="@(ThemeConstants.Button.FillMode.Flat)" Icon="@ExpandIcon_I" OnClick="TogglePanel" Class="no-border"></TelerikButton>
+        </div>
+    </CardHeader>
+    <TelerikAnimationContainer @ref="AnimationContainerRef_I"
+                               AnimationDuration="300"
+                               AnimationType="@AnimationType.None"
+                               ParentInlineStyle="display: block; position: relative;">
+        <CardBody Class="nopadding">
+            <br />
+
+            @if(!string.IsNullOrEmpty(ErrorMessage)) {
+                <div class="k-form-hint pb-0 ml-1" style="color:red ;font-style:italic">@ErrorMessage</div>
+            }
+
+            @if(showEditButton) {
+                <TelerikButton ButtonType="ButtonType.Button" ThemeColor="@(ThemeConstants.Button.ThemeColor.Secondary)"
+                               Class="pb-1 m-1 exam-button" Icon="edit" OnClick="@(async () => await OnSaveOrEditButtonClick("Edit"))">Edit</TelerikButton>
+            }
+
+            <BaseComponent>
+
+            </BaseComponent>
+
+            @if(showSaveButton) {
+                <TelerikButton ButtonType="ButtonType.Button" ThemeColor="@(ThemeConstants.Button.ThemeColor.Secondary)"
+                               Class="pb-1 m-1 exam-button" Icon="edit" OnClick="@(async () => await OnSaveOrEditButtonClick("Save"))">Save</TelerikButton>
+            }
+        </CardBody>
+    </TelerikAnimationContainer>
+</TelerikCard>
+
+
+@code {
+    [Inject]
+    public ViewBaseModel? viewBaseModel { get; set; }
+
+    public bool showEditButton = true;
+
+    public bool showSaveButton = false;
+
+    public string ErrorMessage = "";
+
+    public TelerikAnimationContainer AnimationContainerRef_I { get; set; }
+
+    public bool Expanded_I { get; set; } = false;
+
+    public string ExpandIcon_I => Expanded_I ? "arrow-chevron-up" : "arrow-chevron-down";
+
+    public async void TogglePanel()
+    {
+        if (Expanded_I)
+        {
+            await AnimationContainerRef_I?.HideAsync();
+        }
+        else
+        {
+            await AnimationContainerRef_I?.ShowAsync();
+        }
+        Expanded_I = !Expanded_I;
+    }
+
+
+    public async Task OnSaveOrEditButtonClick(string buttonText)
+    {
+        ErrorMessage = await viewBaseModel.PanelHandler(buttonText);
+
+        if(string.IsNullOrEmpty(ErrorMessage))
+        {
+            showEditButton = !showEditButton;
+            showSaveButton = !showSaveButton;
+        }
+    }
+
+}
