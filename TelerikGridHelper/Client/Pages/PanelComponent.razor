@@ -2,7 +2,14 @@
 
 @using TelerikGridHelper.Client.ViewBase
 
-
+<head>
+    <style>
+        .btn-position {
+            display: flex;
+            justify-content: flex-end;
+        }
+    </style>
+</head>
 
 <TelerikCard Width="100%">
     <CardHeader Class="k-hbox justify-space-between">
@@ -86,7 +93,7 @@
     {
         ErrorMessage = await viewBaseModel.PanelHandler(buttonText);
 
-        if(string.IsNullOrEmpty(ErrorMessage))
+        if(string.IsNullOrEmpty(ErrorMessage)) 
         {
             showEditButton = !showEditButton;
             showSaveButton = !showSaveButton;
@@ -96,9 +103,3 @@
 }
 
 
-<style>
-     .btn-position {
-         display : flex;
-         justify-content : flex-end;
-     }
-</style>
