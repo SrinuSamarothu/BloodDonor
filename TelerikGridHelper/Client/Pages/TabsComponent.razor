@@ -1,0 +1,112 @@
+﻿@page "/tabs"
+@using TelerikGridHelper.Client.Models
+
+
+<head>
+    <style>
+        .add-tab{
+            display : flex;
+            flex-direction : column;
+            gap : 4px;
+
+        }
+    </style>
+</head>
+
+<TelerikTabStrip >
+
+    <TabStripTab Title="New tab +">
+        <Content>
+            <div class="add-tab">
+                <h3>Enter tab values</h3>
+
+                @if (showError)
+                {
+                    <div style="color:red">
+                        <i>Tab title is necessary</i>
+                    </div>
+                }
+
+                <label>* Tab title : </label>
+                <input type="text" @bind-value="newTabTitle" /> <br />
+
+                <label>Tab content : </label>
+                <input type="text" @bind-value="newTabContent" /> <br />
+                <TelerikButton OnClick="AddTab"> Add tab </TelerikButton>
+            </div>
+        </Content>
+    </TabStripTab>
+
+
+    @{
+        foreach(TabModel tabModel in tabModels)
+        {
+            <TabStripTab Title="@tabModel.Title">
+                <HeaderTemplate>
+                    <strong>@tabModel.Title</strong> &nbsp;&nbsp;
+                    <button type="button"
+                            class="close ml-1"
+                            aria-label="Close"
+                            style="border:none; background:none;"
+                    @onclick:stopPropagation
+                    @onclick="@( () => CloseTab(tabModel))">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </HeaderTemplate>
+                <Content>
+                    @tabModel.Content
+                </Content>
+            </TabStripTab>
+        }
+    }
+ 
+
+</TelerikTabStrip>
+
+
+@code {
+
+    string newTabTitle;
+
+    string newTabContent ;
+
+    bool showError = false;
+
+    // int activeTabIndex = 0;
+
+    List<TabModel> tabModels = new List<TabModel>()
+    {
+        new TabModel()
+        {
+            Title = "Default",
+            Content = "I'm the default Telerik tab"
+        }
+    }; 
+
+    public void AddTab()
+    {
+        if (string.IsNullOrEmpty(newTabTitle))
+        {
+            showError = true;
+        }
+        else
+        {
+            showError = false;
+            tabModels.Add(new TabModel()
+                {
+                    Title = newTabTitle,
+                    Content = newTabContent ?? "No tab content provided"
+                });
+
+            //activeTabIndex = tabModels.Count;
+            StateHasChanged();
+        }
+    }
+
+    public object CloseTab(TabModel removeTab)
+    {
+        tabModels.Remove(removeTab);
+        return new();
+    }
+
+}
