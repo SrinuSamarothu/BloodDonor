@@ -3,6 +3,7 @@
 @using TelerikGridHelper.Client.ViewBase
 
 
+
 <TelerikCard Width="100%">
     <CardHeader Class="k-hbox justify-space-between">
         <div>
@@ -22,20 +23,29 @@
 
             @if(!string.IsNullOrEmpty(ErrorMessage)) {
                 <div class="k-form-hint pb-0 ml-1" style="color:red ;font-style:italic">@ErrorMessage</div>
+                <br/>
             }
 
             @if(showEditButton) {
                 <TelerikButton ButtonType="ButtonType.Button" ThemeColor="@(ThemeConstants.Button.ThemeColor.Secondary)"
-                               Class="pb-1 m-1 exam-button" Icon="edit" OnClick="@(async () => await OnSaveOrEditButtonClick("Edit"))">Edit</TelerikButton>
+                               Class="pb-1 m-1 exam-button btn-position" Icon="edit" OnClick="@(async () => await OnSaveOrEditButtonClick("Edit"))">Edit</TelerikButton>
+                               <br />
             }
+            <br />
+            @*<BaseComponent> </BaseComponent>*@
 
-            <BaseComponent>
+            <div>
+                <h3>Sample Panel</h3>
+                <p>This is a sample panel to check the functionalities of <i>Edit & Save</i> buttons</p>
+                <p><i>Edit </i>: This button checks if the current panel (sample panel) is being used by someone, if it is, then will show up an <i>error message</i></p>
+                <p>If not, then the user will be allowed to edit the panel and save it using <i>Save</i> button</p>
+                <p><i>Save </i>: This button will update the panel state to "Saved" along with the UserId.</p>
+            </div>
 
-            </BaseComponent>
-
+            <br />
             @if(showSaveButton) {
                 <TelerikButton ButtonType="ButtonType.Button" ThemeColor="@(ThemeConstants.Button.ThemeColor.Secondary)"
-                               Class="pb-1 m-1 exam-button" Icon="edit" OnClick="@(async () => await OnSaveOrEditButtonClick("Save"))">Save</TelerikButton>
+                               Class="pb-1 m-1 exam-button btn-position" Icon="edit" OnClick="@(async () => await OnSaveOrEditButtonClick("Save"))">Save</TelerikButton>
             }
         </CardBody>
     </TelerikAnimationContainer>
@@ -76,7 +86,7 @@
     {
         ErrorMessage = await viewBaseModel.PanelHandler(buttonText);
 
-        if(string.IsNullOrEmpty(ErrorMessage))
+        if(string.IsNullOrEmpty(ErrorMessage)) 
         {
             showEditButton = !showEditButton;
             showSaveButton = !showSaveButton;
@@ -84,3 +94,11 @@
     }
 
 }
+
+
+<style>
+     .btn-position {
+         display : flex;
+         justify-content : flex-end;
+     }
+</style>
